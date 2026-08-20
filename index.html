@@ -1,0 +1,202 @@
+</htm<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Petnip · Adoção &amp; Apadrinhamento</title>
+<meta name="description" content="Petnip — encontre um novo amigo para adotar ou apadrinhar.">
+ 
+<!-- PWA -->
+<meta name="theme-color" content="#00995E">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Petnip">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+ 
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+ 
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+ 
+<!-- ===== HEADER ===== -->
+<header class="app-header">
+  <div class="app-header__row">
+    <button class="icon-btn" id="menuBtn" aria-label="Abrir menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+    <div class="app-logo">Petnip</div>
+    <button class="icon-btn" id="notifBtn" aria-label="Notificações">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2.5c-3 0-5.4 2.4-5.4 5.4v3.2c0 .6-.2 1.2-.6 1.7l-1.1 1.4c-.7.9-.1 2.3 1.1 2.3h12c1.2 0 1.8-1.4 1.1-2.3l-1.1-1.4c-.4-.5-.6-1.1-.6-1.7V7.9c0-3-2.4-5.4-5.4-5.4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 19.5a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="badge-dot"></span>
+    </button>
+  </div>
+ 
+  <label class="search-bar">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m21 21-3.6-3.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <input type="search" id="searchInput" placeholder="Buscar por nome, raça, cidade...">
+  </label>
+ 
+  <div class="species-tabs" id="speciesTabs">
+    <button class="species-tab is-active" data-species="todos">Todos</button>
+    <button class="species-tab" data-species="cachorro">🐶 Cães</button>
+    <button class="species-tab" data-species="gato">🐱 Gatos</button>
+    <button class="species-tab" data-species="passaro">🦜 Pássaros</button>
+    <button class="species-tab" data-species="silvestre">🐾 Silvestres</button>
+  </div>
+</header>
+ 
+<!-- ===== MAIN VIEWS ===== -->
+<main class="app-main">
+ 
+  <!-- FEED -->
+  <section class="view is-active" id="view-feed" aria-label="Feed de adoção">
+    <div class="banner-card">
+      <p class="banner-eyebrow">Dica Petnip</p>
+      <h2>7 dicas para gatificar sua casa 🐾</h2>
+    </div>
+ 
+    <div class="feed-heading">
+      <h1>Pets esperando por você</h1>
+      <span class="feed-count" id="feedCount">0 disponíveis</span>
+    </div>
+ 
+    <div class="pet-grid" id="petGrid"><!-- cards injetados via JS --></div>
+ 
+    <p class="empty-state" id="emptyFeed" hidden>Nenhum pet encontrado com esse filtro. Tente outra busca 🐕</p>
+  </section>
+ 
+  <!-- FAVORITOS -->
+  <section class="view" id="view-favoritos" aria-label="Favoritos">
+    <div class="feed-heading">
+      <h1>Seus favoritos</h1>
+      <span class="feed-count" id="favCount">0 salvos</span>
+    </div>
+    <div class="pet-grid" id="favGrid"></div>
+    <p class="empty-state" id="emptyFav">Você ainda não favoritou nenhum pet. Toque no ♡ de um card para salvar aqui.</p>
+  </section>
+ 
+  <!-- PERFIL -->
+  <section class="view" id="view-perfil" aria-label="Perfil">
+    <div class="profile-card">
+      <div class="profile-avatar">🧑‍🦱</div>
+      <h1 id="profileName">Toninho Silva</h1>
+      <p class="profile-sub">@toninho · Carapicuíba, SP</p>
+    </div>
+ 
+    <div class="profile-stats">
+      <div class="stat-box"><strong id="statDivulgados">3</strong><span>Divulgados</span></div>
+      <div class="stat-box"><strong id="statAdotados">1</strong><span>Adotados</span></div>
+      <div class="stat-box"><strong id="statApadrinhados">2</strong><span>Apadrinhados</span></div>
+    </div>
+ 
+    <nav class="profile-menu">
+      <button class="profile-menu__item">🐾 Meus pets divulgados</button>
+      <button class="profile-menu__item">💛 Apadrinhamentos ativos</button>
+      <button class="profile-menu__item">⚙️ Configurações da conta</button>
+      <button class="profile-menu__item">❔ Ajuda &amp; suporte</button>
+    </nav>
+  </section>
+ 
+</main>
+ 
+<!-- ===== FAB: Divulgar Pet ===== -->
+<button class="fab" id="fabAdd" aria-label="Divulgar pet para adoção">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
+</button>
+ 
+<!-- ===== BOTTOM NAV ===== -->
+<nav class="bottom-nav" id="bottomNav" aria-label="Navegação principal">
+  <button class="nav-item is-active" data-view="feed">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 11.2 12 4l8 7.2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 9.8V19a1 1 0 0 0 1 1h3v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5h3a1 1 0 0 0 1-1V9.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Feed</span>
+  </button>
+  <button class="nav-item" data-view="favoritos">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 20.2s-7.5-4.6-9.8-9.1C.7 7.6 2.3 4.4 5.6 3.7c2-.4 3.8.5 5 2.2a1 1 0 0 0 1.6 0c1.2-1.7 3-2.6 5-2.2 3.3.7 4.9 3.9 3.4 7.4-2.3 4.5-9.6 9.1-9.6 9.1Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>Favoritos</span>
+  </button>
+  <div class="nav-spacer" aria-hidden="true"></div>
+  <button class="nav-item" data-view="mensagens">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8l-4.5 3.5V6a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>Mensagens</span>
+  </button>
+  <button class="nav-item" data-view="perfil">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="2"/><path d="M4.5 20c1.4-3.4 4.4-5.2 7.5-5.2s6.1 1.8 7.5 5.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <span>Perfil</span>
+  </button>
+</nav>
+ 
+<!-- ===== MODAL: Detalhe do Pet ===== -->
+<div class="modal-overlay" id="petModalOverlay">
+  <div class="pet-modal" id="petModal" role="dialog" aria-modal="true" aria-labelledby="modalPetName">
+    <button class="modal-close" id="modalCloseBtn" aria-label="Fechar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m5 5 14 14M19 5 5 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+    <img class="modal-photo" id="modalPhoto" alt="">
+    <div class="modal-badges" id="modalBadges"></div>
+    <div class="modal-body">
+      <h2 id="modalPetName"></h2>
+      <p class="modal-meta" id="modalPetMeta"></p>
+      <p class="modal-desc" id="modalPetDesc"></p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn--outline" id="modalApadrinharBtn">Apadrinhar</button>
+      <button class="btn btn--primary" id="modalAdotarBtn">Quero adotar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ===== MODAL: Divulgar Pet ===== -->
+<div class="modal-overlay" id="formModalOverlay">
+  <div class="pet-modal pet-modal--form" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+    <button class="modal-close" id="formCloseBtn" aria-label="Fechar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m5 5 14 14M19 5 5 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-body modal-body--form">
+      <h2 id="formTitle">Divulgar um pet 🐾</h2>
+      <form id="petForm">
+        <label class="field">
+          <span>Nome do pet</span>
+          <input type="text" id="fNome" required placeholder="Ex: Luna">
+        </label>
+        <div class="field-row">
+          <label class="field">
+            <span>Espécie</span>
+            <select id="fEspecie">
+              <option value="cachorro">Cachorro</option>
+              <option value="gato">Gato</option>
+              <option value="passaro">Pássaro</option>
+              <option value="silvestre">Silvestre</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Idade</span>
+            <input type="text" id="fIdade" required placeholder="Ex: 2 anos">
+          </label>
+        </div>
+        <label class="field">
+          <span>Cidade / UF</span>
+          <input type="text" id="fCidade" required placeholder="Ex: Osasco, SP">
+        </label>
+        <label class="field">
+          <span>Sobre o pet</span>
+          <textarea id="fDesc" rows="3" placeholder="Personalidade, saúde, convivência..."></textarea>
+        </label>
+        <button type="submit" class="btn btn--primary btn--block">Publicar no feed</button>
+      </form>
+    </div>
+  </div>
+</div>
+ 
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+ 
+<script src="app.js"></script>
+</body>
+l>
