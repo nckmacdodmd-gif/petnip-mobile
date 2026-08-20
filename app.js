@@ -236,7 +236,7 @@
   function renderFeed() {
     const pets = getFilteredPets();
     petGrid.innerHTML = pets.map(cardHtml).join("");
-    feedCount.textContent = `${pets.length} disponível${pets.length === 1 ? "" : "is"}`;
+    feedCount.textContent = `${pets.length} ${pets.length === 1 ? "disponível" : "disponíveis"}`;
     emptyFeed.hidden = pets.length !== 0;
   }
  
