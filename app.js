@@ -1,0 +1,471 @@
+// =============================================================
+// PETNIP — app.js
+// =============================================================
+ 
+(function () {
+  "use strict";
+ 
+  // -----------------------------------------------------------
+  // 1) DADOS MOCKADOS
+  // -----------------------------------------------------------
+  const PETS = [
+    {
+      id: "p1",
+      nome: "Bob",
+      especie: "cachorro",
+      idade: "2 anos",
+      cidade: "Carapicuíba, SP",
+      porte: "Médio porte",
+      temperamento: "Dócil",
+      saude: "Vacinado",
+      sociavel: "Sociável",
+      foto: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=800&q=80&auto=format&fit=crop",
+      descricao: "Bob é um cachorrinho de 2 anos, muito dócil e brincalhão. Se dá bem com outros animais, faz xixi no lugar certo e adora passear. Já está castrado e pronto para ganhar uma nova família."
+    },
+    {
+      id: "p2",
+      nome: "Luna",
+      especie: "gato",
+      idade: "1 ano",
+      cidade: "Osasco, SP",
+      porte: "Pequeno porte",
+      temperamento: "Independente",
+      saude: "Castrada",
+      sociavel: "Tímida no início",
+      foto: "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=800&q=80&auto=format&fit=crop",
+      descricao: "Luna é uma gatinha calma que adora dormir no sol. Leva um tempinho para confiar em pessoas novas, mas depois vira sombra. Já é castrada e vacinada."
+    },
+    {
+      id: "p3",
+      nome: "Thor",
+      especie: "cachorro",
+      idade: "4 anos",
+      cidade: "Barueri, SP",
+      porte: "Grande porte",
+      temperamento: "Protetor",
+      saude: "Vacinado",
+      sociavel: "Sociável com adultos",
+      foto: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&q=80&auto=format&fit=crop",
+      descricao: "Thor é forte, brincalhão e extremamente leal. Ideal para quem tem espaço e experiência com cães de porte grande. Já está castrado."
+    },
+    {
+      id: "p4",
+      nome: "Marley",
+      especie: "cachorro",
+      idade: "6 meses",
+      cidade: "São Paulo, SP",
+      porte: "Pequeno porte",
+      temperamento: "Elétrico",
+      saude: "Em dia com vacinas",
+      sociavel: "Adora crianças",
+      foto: "https://images.unsplash.com/photo-1583512603805-3cc6b41f3edb?w=800&q=80&auto=format&fit=crop",
+      descricao: "Filhote cheio de energia, ótimo para famílias ativas. Já está em processo de adestramento básico e adora brincar de bolinha."
+    },
+    {
+      id: "p5",
+      nome: "Mia",
+      especie: "gato",
+      idade: "3 anos",
+      cidade: "Cotia, SP",
+      porte: "Médio porte",
+      temperamento: "Carinhosa",
+      saude: "Castrada",
+      sociavel: "Sociável",
+      foto: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800&q=80&auto=format&fit=crop",
+      descricao: "Mia é super carinhosa e adora colo. Se dá bem com outros gatos e já viveu com crianças. Está com todas as vacinas em dia."
+    },
+    {
+      id: "p6",
+      nome: "Piu",
+      especie: "passaro",
+      idade: "1 ano",
+      cidade: "Jandira, SP",
+      porte: "Pequeno porte",
+      temperamento: "Cantador",
+      saude: "Saudável",
+      sociavel: "Sociável",
+      foto: "https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=80&auto=format&fit=crop",
+      descricao: "Piu é um canário alegre que canta todas as manhãs. Precisa de uma gaiola espaçosa e companhia frequente."
+    },
+    {
+      id: "p7",
+      nome: "Simba",
+      especie: "gato",
+      idade: "5 meses",
+      cidade: "Osasco, SP",
+      porte: "Pequeno porte",
+      temperamento: "Brincalhão",
+      saude: "Vacinado",
+      sociavel: "Sociável",
+      foto: "https://images.unsplash.com/photo-1517849845537-4d257902861a?w=800&q=80&auto=format&fit=crop",
+      descricao: "Filhote curioso e cheio de energia. Adora brinquedos com penas e já está usando caixa de areia direitinho."
+    },
+    {
+      id: "p8",
+      nome: "Nina",
+      especie: "silvestre",
+      idade: "2 anos",
+      cidade: "Itapevi, SP",
+      porte: "Pequeno porte",
+      temperamento: "Calma",
+      saude: "Reabilitada",
+      sociavel: "Requer manejo especial",
+      foto: "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=800&q=80&auto=format&fit=crop",
+      descricao: "Nina foi resgatada e reabilitada por um centro parceiro. Adoção sujeita a avaliação e autorização do órgão ambiental responsável."
+    }
+  ];
+ 
+  const BADGE_CLASS = {
+    porte: "badge--porte",
+    temperamento: "badge--temperamento",
+    saude: "badge--saude",
+    sociavel: "badge--sociavel"
+  };
+ 
+  // -----------------------------------------------------------
+  // 2) ESTADO
+  // -----------------------------------------------------------
+  const state = {
+    favoritos: loadFavorites(),
+    filtroEspecie: "todos",
+    busca: ""
+  };
+ 
+  function loadFavorites() {
+    try {
+      const raw = localStorage.getItem("petnip:favoritos");
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+ 
+  function saveFavorites() {
+    try {
+      localStorage.setItem("petnip:favoritos", JSON.stringify(state.favoritos));
+    } catch (e) {
+      /* localStorage indisponível — segue sem persistir */
+    }
+  }
+ 
+  // -----------------------------------------------------------
+  // 3) ELEMENTOS
+  // -----------------------------------------------------------
+  const petGrid = document.getElementById("petGrid");
+  const favGrid = document.getElementById("favGrid");
+  const emptyFeed = document.getElementById("emptyFeed");
+  const emptyFav = document.getElementById("emptyFav");
+  const feedCount = document.getElementById("feedCount");
+  const favCount = document.getElementById("favCount");
+  const searchInput = document.getElementById("searchInput");
+  const speciesTabs = document.getElementById("speciesTabs");
+  const bottomNav = document.getElementById("bottomNav");
+  const toast = document.getElementById("toast");
+ 
+  const petModalOverlay = document.getElementById("petModalOverlay");
+  const modalCloseBtn = document.getElementById("modalCloseBtn");
+  const modalPhoto = document.getElementById("modalPhoto");
+  const modalBadges = document.getElementById("modalBadges");
+  const modalPetName = document.getElementById("modalPetName");
+  const modalPetMeta = document.getElementById("modalPetMeta");
+  const modalPetDesc = document.getElementById("modalPetDesc");
+  const modalAdotarBtn = document.getElementById("modalAdotarBtn");
+  const modalApadrinharBtn = document.getElementById("modalApadrinharBtn");
+ 
+  const fabAdd = document.getElementById("fabAdd");
+  const formModalOverlay = document.getElementById("formModalOverlay");
+  const formCloseBtn = document.getElementById("formCloseBtn");
+  const petForm = document.getElementById("petForm");
+ 
+  // -----------------------------------------------------------
+  // 4) RENDERIZAÇÃO DE CARDS
+  // -----------------------------------------------------------
+  function badgeHtml(text, type) {
+    return `<span class="badge ${BADGE_CLASS[type]}">${text}</span>`;
+  }
+ 
+  function cardHtml(pet) {
+    const isFav = state.favoritos.includes(pet.id);
+    return `
+      <article class="pet-card" data-id="${pet.id}">
+        <div class="pet-card__photo-wrap" data-action="open">
+          <img src="${pet.foto}" alt="Foto de ${pet.nome}" loading="lazy">
+          <button class="pet-card__fav ${isFav ? "is-fav" : ""}" data-action="fav" aria-label="Favoritar ${pet.nome}" aria-pressed="${isFav}">
+            ${heartSvg(isFav)}
+          </button>
+          <div class="pet-card__badges">
+            ${badgeHtml(pet.porte, "porte")}
+            ${badgeHtml(pet.temperamento, "temperamento")}
+          </div>
+        </div>
+        <div class="pet-card__info">
+          <div>
+            <div class="pet-card__name-row">
+              <span class="pet-card__name">${pet.nome}</span>
+              <span class="pet-card__age">${pet.idade}</span>
+            </div>
+            <p class="pet-card__location">📍 ${pet.cidade}</p>
+          </div>
+          <div class="pet-card__actions">
+            <button class="btn btn--outline" data-action="apadrinhar">Apadrinhar</button>
+            <button class="btn btn--primary" data-action="adotar">Adotar</button>
+          </div>
+        </div>
+      </article>`;
+  }
+ 
+  function heartSvg(filled) {
+    return filled
+      ? `<svg width="19" height="19" viewBox="0 0 24 24" fill="#FD5A46"><path d="M12 20.2s-7.5-4.6-9.8-9.1C.7 7.6 2.3 4.4 5.6 3.7c2-.4 3.8.5 5 2.2a1 1 0 0 0 1.6 0c1.2-1.7 3-2.6 5-2.2 3.3.7 4.9 3.9 3.4 7.4-2.3 4.5-9.6 9.1-9.6 9.1Z"/></svg>`
+      : `<svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 20.2s-7.5-4.6-9.8-9.1C.7 7.6 2.3 4.4 5.6 3.7c2-.4 3.8.5 5 2.2a1 1 0 0 0 1.6 0c1.2-1.7 3-2.6 5-2.2 3.3.7 4.9 3.9 3.4 7.4-2.3 4.5-9.6 9.1-9.6 9.1Z" stroke="#552CB7" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+  }
+ 
+  function getFilteredPets() {
+    return PETS.filter((pet) => {
+      const matchEspecie = state.filtroEspecie === "todos" || pet.especie === state.filtroEspecie;
+      const q = state.busca.trim().toLowerCase();
+      const matchBusca =
+        !q ||
+        pet.nome.toLowerCase().includes(q) ||
+        pet.cidade.toLowerCase().includes(q) ||
+        pet.temperamento.toLowerCase().includes(q);
+      return matchEspecie && matchBusca;
+    });
+  }
+ 
+  function renderFeed() {
+    const pets = getFilteredPets();
+    petGrid.innerHTML = pets.map(cardHtml).join("");
+    feedCount.textContent = `${pets.length} disponível${pets.length === 1 ? "" : "is"}`;
+    emptyFeed.hidden = pets.length !== 0;
+  }
+ 
+  function renderFavoritos() {
+    const pets = PETS.filter((p) => state.favoritos.includes(p.id));
+    favGrid.innerHTML = pets.map(cardHtml).join("");
+    favCount.textContent = `${pets.length} salvo${pets.length === 1 ? "" : "s"}`;
+    emptyFav.hidden = pets.length !== 0;
+    favGrid.hidden = pets.length === 0;
+  }
+ 
+  function renderAll() {
+    renderFeed();
+    renderFavoritos();
+  }
+ 
+  // -----------------------------------------------------------
+  // 5) FAVORITAR (delegação de evento — funciona no feed e favoritos)
+  // -----------------------------------------------------------
+  function toggleFavorite(id) {
+    const idx = state.favoritos.indexOf(id);
+    if (idx === -1) {
+      state.favoritos.push(id);
+      showToast("Adicionado aos favoritos 💛");
+    } else {
+      state.favoritos.splice(idx, 1);
+      showToast("Removido dos favoritos");
+    }
+    saveFavorites();
+    renderAll();
+  }
+ 
+  function handleGridClick(e) {
+    const card = e.target.closest(".pet-card");
+    if (!card) return;
+    const id = card.dataset.id;
+    const action = e.target.closest("[data-action]")?.dataset.action;
+ 
+    if (action === "fav") {
+      toggleFavorite(id);
+      return;
+    }
+    if (action === "adotar") {
+      openPetModal(id);
+      return;
+    }
+    if (action === "apadrinhar") {
+      showToast("Apadrinhamento iniciado — em breve você recebe os detalhes 💌");
+      return;
+    }
+    if (action === "open") {
+      openPetModal(id);
+    }
+  }
+ 
+  petGrid.addEventListener("click", handleGridClick);
+  favGrid.addEventListener("click", handleGridClick);
+ 
+  // -----------------------------------------------------------
+  // 6) BUSCA E FILTRO DE ESPÉCIE
+  // -----------------------------------------------------------
+  searchInput.addEventListener("input", (e) => {
+    state.busca = e.target.value;
+    renderFeed();
+  });
+ 
+  speciesTabs.addEventListener("click", (e) => {
+    const tab = e.target.closest(".species-tab");
+    if (!tab) return;
+    speciesTabs.querySelectorAll(".species-tab").forEach((t) => t.classList.remove("is-active"));
+    tab.classList.add("is-active");
+    state.filtroEspecie = tab.dataset.species;
+    renderFeed();
+  });
+ 
+  // -----------------------------------------------------------
+  // 7) NAVEGAÇÃO INFERIOR (bottom nav)
+  // -----------------------------------------------------------
+  const views = {
+    feed: document.getElementById("view-feed"),
+    favoritos: document.getElementById("view-favoritos"),
+    perfil: document.getElementById("view-perfil")
+  };
+ 
+  function switchView(name) {
+    if (name === "mensagens") {
+      showToast("Mensagens chegando em breve 💬");
+      return;
+    }
+    if (!views[name]) return;
+ 
+    Object.values(views).forEach((v) => v.classList.remove("is-active"));
+    views[name].classList.add("is-active");
+ 
+    bottomNav.querySelectorAll(".nav-item").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.view === name);
+    });
+ 
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+ 
+  bottomNav.addEventListener("click", (e) => {
+    const btn = e.target.closest(".nav-item");
+    if (!btn) return;
+    switchView(btn.dataset.view);
+  });
+ 
+  // -----------------------------------------------------------
+  // 8) MODAL — DETALHE DO PET
+  // -----------------------------------------------------------
+  let pendingPetId = null;
+ 
+  function openPetModal(id) {
+    const pet = PETS.find((p) => p.id === id);
+    if (!pet) return;
+    pendingPetId = id;
+ 
+    modalPhoto.src = pet.foto;
+    modalPhoto.alt = `Foto de ${pet.nome}`;
+    modalPetName.textContent = `${pet.nome} · ${pet.idade}`;
+    modalPetMeta.textContent = `📍 ${pet.cidade}`;
+    modalPetDesc.textContent = pet.descricao;
+    modalBadges.innerHTML =
+      badgeHtml(pet.porte, "porte") +
+      badgeHtml(pet.temperamento, "temperamento") +
+      badgeHtml(pet.saude, "saude") +
+      badgeHtml(pet.sociavel, "sociavel");
+ 
+    openOverlay(petModalOverlay);
+  }
+ 
+  function closePetModal() {
+    closeOverlay(petModalOverlay);
+    pendingPetId = null;
+  }
+ 
+  modalCloseBtn.addEventListener("click", closePetModal);
+  petModalOverlay.addEventListener("click", (e) => {
+    if (e.target === petModalOverlay) closePetModal();
+  });
+ 
+  modalAdotarBtn.addEventListener("click", () => {
+    const pet = PETS.find((p) => p.id === pendingPetId);
+    showToast(`Pedido de adoção de ${pet ? pet.nome : "pet"} enviado! 🐾`);
+    closePetModal();
+  });
+ 
+  modalApadrinharBtn.addEventListener("click", () => {
+    const pet = PETS.find((p) => p.id === pendingPetId);
+    showToast(`Apadrinhamento de ${pet ? pet.nome : "pet"} iniciado 💛`);
+    closePetModal();
+  });
+ 
+  // -----------------------------------------------------------
+  // 9) FAB — DIVULGAR PET
+  // -----------------------------------------------------------
+  fabAdd.addEventListener("click", () => openOverlay(formModalOverlay));
+  formCloseBtn.addEventListener("click", () => closeOverlay(formModalOverlay));
+  formModalOverlay.addEventListener("click", (e) => {
+    if (e.target === formModalOverlay) closeOverlay(formModalOverlay);
+  });
+ 
+  petForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const nome = document.getElementById("fNome").value.trim();
+    const especie = document.getElementById("fEspecie").value;
+    const idade = document.getElementById("fIdade").value.trim();
+    const cidade = document.getElementById("fCidade").value.trim();
+    const desc = document.getElementById("fDesc").value.trim();
+ 
+    if (!nome || !idade || !cidade) return;
+ 
+    const novoPet = {
+      id: "u" + Date.now(),
+      nome,
+      especie,
+      idade,
+      cidade,
+      porte: "Porte a definir",
+      temperamento: "Novo no Petnip",
+      saude: "A confirmar",
+      sociavel: "A confirmar",
+      foto: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&q=80&auto=format&fit=crop",
+      descricao: desc || `${nome} está à procura de uma nova família cheia de amor.`
+    };
+ 
+    PETS.unshift(novoPet);
+    petForm.reset();
+    closeOverlay(formModalOverlay);
+    switchView("feed");
+    renderAll();
+    showToast(`${nome} foi publicado no feed! 🎉`);
+  });
+ 
+  // -----------------------------------------------------------
+  // 10) OVERLAYS / TOAST — helpers
+  // -----------------------------------------------------------
+  function openOverlay(overlay) {
+    overlay.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+  }
+ 
+  function closeOverlay(overlay) {
+    overlay.classList.remove("is-open");
+    document.body.style.overflow = "";
+  }
+ 
+  let toastTimer = null;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add("is-visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2400);
+  }
+ 
+  // -----------------------------------------------------------
+  // 11) INICIALIZAÇÃO
+  // -----------------------------------------------------------
+  renderAll();
+ 
+  // -----------------------------------------------------------
+  // 12) SERVICE WORKER (PWA / offline)
+  // -----------------------------------------------------------
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("sw.js")
+        .catch((err) => console.warn("Falha ao registrar o Service Worker:", err));
+    });
+  }
+})();
+ 
