@@ -252,7 +252,66 @@
     renderFeed();
     renderFavoritos();
   }
- 
+
+ // -----------------------------------------------------------
+// 4.1) SKELETON SCREENS
+// -----------------------------------------------------------
+const FEED_SKELETON_COUNT = 4;
+
+function skeletonCardHtml() {
+  return `
+    <article class="pet-card pet-card--skeleton" aria-hidden="true">
+      <div class="pet-card__photo-wrap"><div class="skeleton skeleton--photo"></div></div>
+      <div class="pet-card__info">
+        <div class="pet-card__name-row">
+          <span class="skeleton skeleton--text skeleton--name"></span>
+          <span class="skeleton skeleton--text skeleton--age"></span>
+        </div>
+        <span class="skeleton skeleton--text skeleton--location"></span>
+        <div class="pet-card__badges-skeleton">
+          <span class="skeleton skeleton--badge"></span>
+          <span class="skeleton skeleton--badge"></span>
+        </div>
+        <div class="pet-card__actions">
+          <span class="skeleton skeleton--btn"></span>
+          <span class="skeleton skeleton--btn"></span>
+        </div>
+      </div>
+    </article>`;
+}
+
+function renderFeedSkeletons() {
+  petGrid.setAttribute("aria-busy", "true");
+  petGrid.innerHTML = Array.from({ length: FEED_SKELETON_COUNT }, skeletonCardHtml).join("");
+  emptyFeed.hidden = true;
+  feedCount.textContent = "Carregando...";
+}
+
+function toggleFeedControls(enabled) {
+  searchInput.disabled = !enabled;
+  speciesTabs.classList.toggle("is-loading-controls", !enabled);
+}
+
+// Simula uma requisição assíncrona ao servidor (1.5s a 2s) e faz a
+// transição suave do Skeleton Screen para o conteúdo real do feed.
+function loadFeed() {
+  renderFeedSkeletons();
+  toggleFeedControls(false);
+
+  const simulatedNetworkDelay = 1500 + Math.random() * 500; // 1.5s–2s
+
+  setTimeout(() => {
+    // fade-out do skeleton antes de trocar o conteúdo
+    petGrid.classList.add("is-transitioning");
+
+    setTimeout(() => {
+      renderFeed();
+      toggleFeedControls(true);
+      petGrid.classList.remove("is-transitioning"); // fade-in do conteúdo real
+    }, 220);
+  }, simulatedNetworkDelay);
+}
+
   // -----------------------------------------------------------
   // 5) FAVORITAR (delegação de evento — funciona no feed e favoritos)
   // -----------------------------------------------------------
@@ -455,7 +514,8 @@
   // -----------------------------------------------------------
   // 11) INICIALIZAÇÃO
   // -----------------------------------------------------------
-  renderAll();
+ renderFavoritos();  // dado local — não depende de "requisição", carrega instantâneo
+ loadFeed();          // exibe skeleton e troca suavemente pelos pets reais
  
   // -----------------------------------------------------------
   // 12) SERVICE WORKER (PWA / offline)
