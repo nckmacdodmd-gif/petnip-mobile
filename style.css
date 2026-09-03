@@ -681,7 +681,116 @@ img { max-width: 100%; display: block; }
   opacity: 1;
   transform: translate(-50%, 0);
 }
- 
+
+/* =========================================================
+   SKELETON SCREENS — efeito shimmer durante carregamento
+   ========================================================= */
+
+/* Container do feed avisa leitores de tela que está carregando */
+.pet-grid[aria-busy="true"] { cursor: progress; }
+
+/* Transição suave entre skeleton e conteúdo real */
+.pet-grid {
+  transition: opacity .22s ease;
+}
+.pet-grid.is-transitioning {
+  opacity: 0;
+}
+
+/* Controles do header ficam desabilitados visualmente durante o carregamento */
+.is-loading-controls {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Base do shimmer: gradiente suave nos tons da marca (cream/off-white) */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    #EAE1D3 0%,
+    #EAE1D3 35%,
+    #FBF7F1 50%,
+    #EAE1D3 65%,
+    #EAE1D3 100%
+  );
+  background-size: 400% 100%;
+  animation: petnip-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes petnip-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
+}
+
+/* Card de skeleton reaproveita a moldura do pet-card real */
+.pet-card--skeleton {
+  pointer-events: none;
+}
+
+.pet-card--skeleton .pet-card__photo-wrap {
+  background: var(--surface-muted);
+}
+
+.skeleton--photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+/* Linhas de texto (nome, idade, localização) */
+.skeleton--text {
+  display: inline-block;
+  height: 14px;
+  border-radius: 6px;
+}
+
+.skeleton--name {
+  width: 58%;
+  height: 18px;
+}
+
+.skeleton--age {
+  width: 44px;
+  height: 13px;
+}
+
+.skeleton--location {
+  display: block;
+  width: 68%;
+  height: 12px;
+  margin-top: 8px;
+}
+
+/* Badges de característica (porte, temperamento) */
+.pet-card__badges-skeleton {
+  display: flex;
+  gap: 6px;
+  margin: 4px 0 2px;
+}
+
+.skeleton--badge {
+  width: 78px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+}
+
+.skeleton--badge:nth-child(2) {
+  width: 96px;
+}
+
+/* Botões de ação (Apadrinhar / Adotar) */
+.skeleton--btn {
+  flex: 1;
+  min-height: var(--touch-min);
+  border-radius: var(--radius-pill);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; background-position: 50% 0; }
+}
+
 /* =========================================================
    ACESSIBILIDADE
    ========================================================= */
