@@ -67,8 +67,82 @@
       <span class="feed-count" id="feedCount">0 disponíveis</span>
     </div>
  
-    <div class="pet-grid" id="petGrid"><!-- cards injetados via JS --></div>
- 
+<div class="pet-grid" id="petGrid" aria-busy="true">
+  <!-- Skeleton inicial: some assim que os pets reais forem renderizados via JS -->
+  <article class="pet-card pet-card--skeleton" aria-hidden="true">
+    <div class="pet-card__photo-wrap"><div class="skeleton skeleton--photo"></div></div>
+    <div class="pet-card__info">
+      <div class="pet-card__name-row">
+        <span class="skeleton skeleton--text skeleton--name"></span>
+        <span class="skeleton skeleton--text skeleton--age"></span>
+      </div>
+      <span class="skeleton skeleton--text skeleton--location"></span>
+      <div class="pet-card__badges-skeleton">
+        <span class="skeleton skeleton--badge"></span>
+        <span class="skeleton skeleton--badge"></span>
+      </div>
+      <div class="pet-card__actions">
+        <span class="skeleton skeleton--btn"></span>
+        <span class="skeleton skeleton--btn"></span>
+      </div>
+    </div>
+  </article>
+  <article class="pet-card pet-card--skeleton" aria-hidden="true">
+    <div class="pet-card__photo-wrap"><div class="skeleton skeleton--photo"></div></div>
+    <div class="pet-card__info">
+      <div class="pet-card__name-row">
+        <span class="skeleton skeleton--text skeleton--name"></span>
+        <span class="skeleton skeleton--text skeleton--age"></span>
+      </div>
+      <span class="skeleton skeleton--text skeleton--location"></span>
+      <div class="pet-card__badges-skeleton">
+        <span class="skeleton skeleton--badge"></span>
+        <span class="skeleton skeleton--badge"></span>
+      </div>
+      <div class="pet-card__actions">
+        <span class="skeleton skeleton--btn"></span>
+        <span class="skeleton skeleton--btn"></span>
+      </div>
+    </div>
+  </article>
+  <article class="pet-card pet-card--skeleton" aria-hidden="true">
+    <div class="pet-card__photo-wrap"><div class="skeleton skeleton--photo"></div></div>
+    <div class="pet-card__info">
+      <div class="pet-card__name-row">
+        <span class="skeleton skeleton--text skeleton--name"></span>
+        <span class="skeleton skeleton--text skeleton--age"></span>
+      </div>
+      <span class="skeleton skeleton--text skeleton--location"></span>
+      <div class="pet-card__badges-skeleton">
+        <span class="skeleton skeleton--badge"></span>
+        <span class="skeleton skeleton--badge"></span>
+      </div>
+      <div class="pet-card__actions">
+        <span class="skeleton skeleton--btn"></span>
+        <span class="skeleton skeleton--btn"></span>
+      </div>
+    </div>
+  </article>
+  <article class="pet-card pet-card--skeleton" aria-hidden="true">
+    <div class="pet-card__photo-wrap"><div class="skeleton skeleton--photo"></div></div>
+    <div class="pet-card__info">
+      <div class="pet-card__name-row">
+        <span class="skeleton skeleton--text skeleton--name"></span>
+        <span class="skeleton skeleton--text skeleton--age"></span>
+      </div>
+      <span class="skeleton skeleton--text skeleton--location"></span>
+      <div class="pet-card__badges-skeleton">
+        <span class="skeleton skeleton--badge"></span>
+        <span class="skeleton skeleton--badge"></span>
+      </div>
+      <div class="pet-card__actions">
+        <span class="skeleton skeleton--btn"></span>
+        <span class="skeleton skeleton--btn"></span>
+      </div>
+    </div>
+  </article>
+</div>
+
     <p class="empty-state" id="emptyFeed" hidden>Nenhum pet encontrado com esse filtro. Tente outra busca 🐕</p>
   </section>
  
