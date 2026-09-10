@@ -113,6 +113,13 @@
       foto: "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=800&q=80&auto=format&fit=crop",
       descricao: "Nina foi resgatada e reabilitada por um centro parceiro. Adoção sujeita a avaliação e autorização do órgão ambiental responsável."
     }
+
+   let TASKS = [
+  { id: "t1", text: "Tomar vacina antirrábica" },
+  { id: "t2", text: "Comprar ração" },
+  { id: "t3", text: "Passeio da tarde" },
+  { id: "t4", text: "Dar vermífugo" }
+];
   ];
  
   const BADGE_CLASS = {
@@ -514,9 +521,10 @@ function loadFeed() {
   // -----------------------------------------------------------
   // 11) INICIALIZAÇÃO
   // -----------------------------------------------------------
- renderFavoritos();  // dado local — não depende de "requisição", carrega instantâneo
- loadFeed();          // exibe skeleton e troca suavemente pelos pets reais
- 
+renderFavoritos();
+renderTasks();
+loadFeed();
+
   // -----------------------------------------------------------
   // 12) SERVICE WORKER (PWA / offline)
   // -----------------------------------------------------------
@@ -528,4 +536,173 @@ function loadFeed() {
     });
   }
 })();
+
+// -----------------------------------------------------------
+// CUIDADOS DO PET — GESTOS: "Swipe to Delete"
+// -----------------------------------------------------------
+let openSwipeItem = null;
+let dragState = null;
+
+const TRASH_ICON = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m1 0-.7 12.1a2 2 0 0 1-2 1.9H10.7a2 2 0 0 1-2-1.9L8 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function taskItemHtml(task) {
+  return `
+    <li class="task-item" data-id="${task.id}">
+      <div class="task-item__content">
+        <span class="task-checkbox" aria-hidden="true"></span>
+        <span class="task-text">${task.text}</span>
+        <button class="task-item__trash" data-action="reveal" aria-label="Excluir tarefa: ${task.text}">
+          ${TRASH_ICON}
+        </button>
+      </div>
+      <div class="swipe-confirm" aria-hidden="true">
+        <div class="swipe-confirm__track" data-role="track">
+          <div class="swipe-confirm__fill" data-role="fill"></div>
+          <p class="swipe-confirm__label" data-role="label">Arraste para excluir</p>
+          <button class="swipe-confirm__handle" data-role="handle" aria-label="Arraste até o fim para confirmar a exclusão">
+            ${TRASH_ICON}
+          </button>
+        </div>
+        <button class="swipe-confirm__cancel" data-action="cancel" aria-label="Cancelar exclusão">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m5 5 14 14M19 5 5 19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </li>`;
+}
+
+function renderTasks() {
+  taskList.innerHTML = TASKS.map(taskItemHtml).join("");
+}
+
+function openSwipe(li) {
+  if (openSwipeItem && openSwipeItem !== li) closeSwipe(openSwipeItem);
+  resetSwipeVisual(li);
+  li.classList.add("is-revealed");
+  li.querySelector(".swipe-confirm").setAttribute("aria-hidden", "false");
+  openSwipeItem = li;
+}
+
+function closeSwipe(li) {
+  li.classList.remove("is-revealed");
+  li.querySelector(".swipe-confirm").setAttribute("aria-hidden", "true");
+  resetSwipeVisual(li);
+  if (openSwipeItem === li) openSwipeItem = null;
+}
+
+function resetSwipeVisual(li) {
+  const handle = li.querySelector('[data-role="handle"]');
+  const fill = li.querySelector('[data-role="fill"]');
+  const label = li.querySelector('[data-role="label"]');
+  if (!handle) return;
+  handle.style.left = "2px";
+  fill.style.width = "48px";
+  label.style.opacity = "1";
+}
+
+taskList.addEventListener("click", (e) => {
+  const li = e.target.closest(".task-item");
+  if (!li) return;
+  if (e.target.closest('[data-action="reveal"]')) { openSwipe(li); return; }
+  if (e.target.closest('[data-action="cancel"]')) { closeSwipe(li); }
+});
+
+document.addEventListener("click", (e) => {
+  if (!openSwipeItem) return;
+  if (!openSwipeItem.contains(e.target)) closeSwipe(openSwipeItem);
+});
+
+function getClientX(evt) {
+  if (evt.touches && evt.touches.length) return evt.touches[0].clientX;
+  if (evt.changedTouches && evt.changedTouches.length) return evt.changedTouches[0].clientX;
+  return evt.clientX;
+}
+
+function startDrag(e) {
+  const handle = e.target.closest('[data-role="handle"]');
+  if (!handle) return;
+
+  const li = handle.closest(".task-item");
+  const track = li.querySelector('[data-role="track"]');
+  const fill = li.querySelector('[data-role="fill"]');
+  const label = li.querySelector('[data-role="label"]');
+
+  const trackWidth = track.getBoundingClientRect().width;
+  const handleWidth = handle.offsetWidth;
+  const maxX = Math.max(trackWidth - handleWidth - 4, 1);
+
+  dragState = { li, track, handle, fill, label, startX: getClientX(e), maxX, handleWidth, currentX: 0 };
+
+  track.classList.add("is-dragging");
+  if (e.cancelable) e.preventDefault();
+}
+
+function onDrag(e) {
+  if (!dragState) return;
+  const clientX = getClientX(e);
+  const delta = clientX - dragState.startX;
+  const newX = Math.min(Math.max(delta, 0), dragState.maxX);
+  dragState.currentX = newX;
+
+  dragState.handle.style.left = (newX + 2) + "px";
+  dragState.fill.style.width = (newX + dragState.handleWidth) + "px";
+  dragState.label.style.opacity = String(Math.max(0, 1 - (newX / dragState.maxX) * 1.4));
+
+  if (e.cancelable) e.preventDefault();
+}
+
+function endDrag() {
+  if (!dragState) return;
+  const { li, track, handle, fill, label, currentX, maxX } = dragState;
+  track.classList.remove("is-dragging");
+  const percent = currentX / maxX;
+  const CONFIRM_THRESHOLD = 0.85;
+
+  if (percent >= CONFIRM_THRESHOLD) {
+    handle.style.left = (maxX + 2) + "px";
+    fill.style.width = "100%";
+    label.style.opacity = "0";
+    const taskId = li.dataset.id;
+    setTimeout(() => removeTaskWithAnimation(li, taskId), 120);
+  } else {
+    handle.style.left = "2px";
+    fill.style.width = "48px";
+    label.style.opacity = "1";
+  }
+  dragState = null;
+}
+
+taskList.addEventListener("mousedown", startDrag);
+taskList.addEventListener("touchstart", startDrag, { passive: false });
+document.addEventListener("mousemove", onDrag);
+document.addEventListener("touchmove", onDrag, { passive: false });
+document.addEventListener("mouseup", endDrag);
+document.addEventListener("touchend", endDrag);
+document.addEventListener("touchcancel", endDrag);
+
+function removeTaskWithAnimation(li, taskId) {
+  if (openSwipeItem === li) openSwipeItem = null;
+
+  const height = li.getBoundingClientRect().height;
+  li.style.height = height + "px";
+  li.style.overflow = "hidden";
+  void li.offsetHeight;
+
+  li.classList.add("is-deleting");
+
+  requestAnimationFrame(() => {
+    li.style.height = "0px";
+    li.style.marginBottom = "0px";
+    li.style.opacity = "0";
+    li.style.transform = "scale(0.96)";
+  });
+
+  li.addEventListener("transitionend", function onEnd(ev) {
+    if (ev.propertyName !== "height") return;
+    li.removeEventListener("transitionend", onEnd);
+    li.remove();
+    TASKS = TASKS.filter((t) => t.id !== taskId);
+    showToast("Tarefa removida ✅");
+  });
+}
+
  
