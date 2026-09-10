@@ -169,7 +169,39 @@
       <div class="stat-box"><strong id="statAdotados">1</strong><span>Adotados</span></div>
       <div class="stat-box"><strong id="statApadrinhados">2</strong><span>Apadrinhados</span></div>
     </div>
- 
+
+   <!-- ===== CUIDADOS DO PET — lista com gesto "swipe to delete" ===== -->
+<section class="task-section" aria-label="Cuidados do pet">
+  <div class="task-section__heading">
+    <h2>Cuidados do pet</h2>
+    <span class="task-section__hint">Toque na lixeira e arraste para confirmar</span>
+  </div>
+  <ul class="task-list" id="taskList"><!-- itens injetados via JS --></ul>
+</section>
+
+Cada item da lista (gerado via JS, mas a estrutura é esta):
+<li class="task-item" data-id="t1">
+  <div class="task-item__content">
+    <span class="task-checkbox" aria-hidden="true"></span>
+    <span class="task-text">Tomar vacina antirrábica</span>
+    <button class="task-item__trash" data-action="reveal" aria-label="Excluir tarefa: Tomar vacina antirrábica">
+      <svg ... ícone de lixeira ... ></svg>
+    </button>
+  </div>
+
+  <!-- Painel de confirmação por swipe — some, revelado ao tocar na lixeira -->
+  <div class="swipe-confirm" aria-hidden="true">
+    <div class="swipe-confirm__track" data-role="track">
+      <div class="swipe-confirm__fill" data-role="fill"></div>
+      <p class="swipe-confirm__label" data-role="label">Arraste para excluir</p>
+      <button class="swipe-confirm__handle" data-role="handle" aria-label="Arraste até o fim para confirmar a exclusão">
+        <svg ... ícone de lixeira ... ></svg>
+      </button>
+    </div>
+    <button class="swipe-confirm__cancel" data-action="cancel" aria-label="Cancelar exclusão">✕</button>
+  </div>
+</li>
+   
     <nav class="profile-menu">
       <button class="profile-menu__item">🐾 Meus pets divulgados</button>
       <button class="profile-menu__item">💛 Apadrinhamentos ativos</button>
