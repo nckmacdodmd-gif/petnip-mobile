@@ -806,3 +806,174 @@ textarea:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* =========================================================
+   CUIDADOS DO PET — lista + gesto "Swipe to Delete"
+   ========================================================= */
+.task-section { margin: 22px 0 26px; }
+
+.task-section__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.task-section__heading h2 { font-size: 18px; }
+
+.task-section__hint {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8A8478;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-item {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  min-height: var(--touch-min);
+  transition: height .32s ease, opacity .28s ease, margin-bottom .28s ease, transform .28s ease;
+}
+
+.task-item__content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px 10px 14px;
+  min-height: var(--touch-min);
+}
+
+.task-checkbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2.2px solid var(--green-petnip);
+  flex: none;
+}
+
+.task-text {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.task-item__trash {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--coral);
+  border-radius: 50%;
+}
+
+.task-item__trash:active { background: rgba(253, 90, 70, 0.12); }
+
+/* Painel de confirmação por swipe — cobre o item quando revelado */
+.swipe-confirm {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px 0 14px;
+  background: var(--surface);
+  transform: translateX(100%);
+  transition: transform .25s ease;
+  pointer-events: none;
+}
+
+.task-item.is-revealed .swipe-confirm {
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.swipe-confirm__track {
+  position: relative;
+  flex: 1;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  background: #FBE0DB;
+  overflow: hidden;
+}
+
+.swipe-confirm__track.is-dragging .swipe-confirm__fill,
+.swipe-confirm__track.is-dragging .swipe-confirm__handle {
+  transition: none; /* feedback 1:1 com o dedo durante o arraste */
+}
+
+.swipe-confirm__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 48px;
+  background: linear-gradient(90deg, var(--coral), #ff7d67);
+  border-radius: var(--radius-pill);
+  transition: width .2s ease;
+}
+
+.swipe-confirm__label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--coral);
+  letter-spacing: 0.01em;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity .15s ease;
+}
+
+.swipe-confirm__handle {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--coral);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(253, 90, 70, 0.45);
+  transition: left .2s ease;
+  touch-action: none;
+  cursor: grab;
+}
+
+.swipe-confirm__handle:active { cursor: grabbing; }
+
+.swipe-confirm__cancel {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8A8478;
+}
+
+.swipe-confirm__cancel:active { background: var(--surface-muted); }
+
+.task-item.is-deleting { pointer-events: none; }
