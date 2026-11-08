@@ -5,16 +5,18 @@
  
 const CACHE_NAME = "petnip-cache-v1";
  
-const APP_SHELL = [
+onst APP_SHELL = [
   "/",
   "/index.html",
   "/style.css",
   "/app.js",
   "/manifest.json",
+  "/assets/success-lottie.json",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/apple-touch-icon.png"
 ];
+
  
 // ---------- INSTALL: pré-cache do app shell ----------
 self.addEventListener("install", (event) => {
