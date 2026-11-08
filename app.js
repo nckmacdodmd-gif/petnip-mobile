@@ -444,11 +444,11 @@ function loadFeed() {
     if (e.target === petModalOverlay) closePetModal();
   });
  
-  modalAdotarBtn.addEventListener("click", () => {
-    const pet = PETS.find((p) => p.id === pendingPetId);
-    showToast(`Pedido de adoção de ${pet ? pet.nome : "pet"} enviado! 🐾`);
-    closePetModal();
-  });
+ modalAdotarBtn.addEventListener("click", () => {
+  const pet = PETS.find((p) => p.id === pendingPetId);
+  confirmAdoption(pet);
+});
+
  
   modalApadrinharBtn.addEventListener("click", () => {
     const pet = PETS.find((p) => p.id === pendingPetId);
@@ -518,12 +518,121 @@ function loadFeed() {
     toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2400);
   }
  
+ // -----------------------------------------------------------
+  // 11) MICROINTERAÇÕES — ripple tátil + confirmação de sucesso (Lottie)
   // -----------------------------------------------------------
-  // 11) INICIALIZAÇÃO
-  // -----------------------------------------------------------
-renderFavoritos();
-renderTasks();
-loadFeed();
+
+  // ---- 11.1) Ripple tátil em qualquer .btn / .fab / .icon-btn ----
+  // Delegação global: funciona em botões já existentes e nos criados depois.
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest(".btn, .fab, .icon-btn");
+    if (!el || el.disabled || el.classList.contains("is-loading")) return;
+
+    const rect = el.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 1.4;
+    const clientX = e.clientX || (rect.left + rect.width / 2);
+    const clientY = e.clientY || (rect.top + rect.height / 2);
+
+    const ripple = document.createElement("span");
+    ripple.className = "ripple";
+    ripple.style.width = ripple.style.height = size + "px";
+    ripple.style.left = (clientX - rect.left - size / 2) + "px";
+    ripple.style.top = (clientY - rect.top - size / 2) + "px";
+
+    el.appendChild(ripple);
+    ripple.addEventListener("animationend", () => ripple.remove(), { once: true });
+  });
+
+  // ---- 11.2) Overlay de sucesso com animação Lottie + confete ----
+  const successOverlay = document.getElementById("successOverlay");
+  const successLottieEl = document.getElementById("successLottie");
+  const successConfettiEl = document.getElementById("successConfetti");
+  const successDesc = document.getElementById("successDesc");
+
+  const CONFETTI_COLORS = ["#FD5A46", "#FFC567", "#FB7DA8", "#058CD7", "#552CB7"];
+  let successLottieInstance = null;
+  let successAutoCloseTimer = null;
+
+  function buildConfetti() {
+    successConfettiEl.innerHTML = "";
+    const pieces = 14;
+    for (let i = 0; i < pieces; i++) {
+      const piece = document.createElement("span");
+      piece.className = "confetti-piece";
+      const angle = (360 / pieces) * i + (Math.random() * 18 - 9);
+      const distance = 90 + Math.random() * 46;
+      const rad = (angle * Math.PI) / 180;
+      const x = Math.cos(rad) * distance;
+      const y = Math.sin(rad) * distance;
+      piece.style.setProperty("--confetti-x", x.toFixed(0) + "px");
+      piece.style.setProperty("--confetti-y", y.toFixed(0) + "px");
+      piece.style.setProperty("--confetti-r", (Math.random() * 320 - 160).toFixed(0) + "deg");
+      piece.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      piece.style.animationDelay = (Math.random() * 0.08).toFixed(2) + "s";
+      if (Math.random() > 0.5) piece.style.borderRadius = "50%";
+      successConfettiEl.appendChild(piece);
+    }
+  }
+
+  // Carrega (ou reinicia) a animação Lottie da patinha comemorativa.
+  function playSuccessLottie() {
+    if (typeof lottie === "undefined") return; // biblioteca ainda carregando via CDN
+
+    if (successLottieInstance) {
+      successLottieInstance.destroy();
+      successLottieInstance = null;
+    }
+    successLottieEl.innerHTML = "";
+
+    successLottieInstance = lottie.loadAnimation({
+      container: successLottieEl,
+      renderer: "svg",
+      loop: false,
+      autoplay: true,
+      path: "assets/success-lottie.json"
+    });
+  }
+
+  // Exibe a microanimação de sucesso e fecha sozinha após ~2s.
+  function showSuccessAnimation(message, onClose) {
+    if (message) successDesc.textContent = message;
+
+    buildConfetti();
+    successOverlay.classList.add("is-open");
+    successOverlay.setAttribute("aria-hidden", "false");
+    playSuccessLottie();
+
+    clearTimeout(successAutoCloseTimer);
+    successAutoCloseTimer = setTimeout(() => {
+      successOverlay.classList.remove("is-open");
+      successOverlay.setAttribute("aria-hidden", "true");
+      if (typeof onClose === "function") onClose();
+    }, 2000);
+  }
+
+  // ---- 11.3) Fluxo completo do botão-chave "Quero adotar" ----
+  // 1) micro toque no botão (ripple já cobre isso) → 2) loading progressivo →
+  // 3) animação Lottie de sucesso + mensagem → 4) retorno suave ao feed.
+  function confirmAdoption(pet) {
+    if (!pet || modalAdotarBtn.classList.contains("is-loading")) return;
+
+    modalAdotarBtn.classList.add("is-loading");
+    modalAdotarBtn.querySelector(".btn__label").textContent = "Enviando...";
+
+    const simulatedRequestDelay = 1100 + Math.random() * 400; // ~1.1s–1.5s
+
+    setTimeout(() => {
+      modalAdotarBtn.classList.remove("is-loading");
+      modalAdotarBtn.querySelector(".btn__label").textContent = "Quero adotar";
+
+      closePetModal();
+      showSuccessAnimation(
+        `${pet.nome} ficará muito feliz! Em breve o tutor entra em contato. 🐾`,
+        () => switchView("feed")
+      );
+    }, simulatedRequestDelay);
+  }
+
 
   // -----------------------------------------------------------
   // 12) SERVICE WORKER (PWA / offline)
