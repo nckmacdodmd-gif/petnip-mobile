@@ -683,6 +683,172 @@ img { max-width: 100%; display: block; }
 }
 
 /* =========================================================
+   MICROINTERAÇÕES TÁTEIS — ripple, elevação e loading nos botões
+   ========================================================= */
+.btn, .fab, .icon-btn {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn { transition: transform .12s ease, box-shadow .18s ease, opacity .12s ease; }
+.btn:active { transform: scale(0.96); }
+
+.btn--primary { box-shadow: 0 4px 14px rgba(253, 90, 70, 0.32); }
+.btn--primary:active { box-shadow: 0 2px 6px rgba(253, 90, 70, 0.28); }
+
+.fab:active, .icon-btn:active { transform: scale(0.92); }
+
+/* Ripple: círculo que nasce no ponto de toque e se expande (gerado via JS) */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  transform: scale(0);
+  pointer-events: none;
+  animation: petnip-ripple .5s ease-out forwards;
+}
+
+.btn--outline .ripple,
+.icon-btn .ripple {
+  background: rgba(85, 44, 183, 0.18);
+}
+
+@keyframes petnip-ripple {
+  to { transform: scale(2.6); opacity: 0; }
+}
+
+/* Estado de carregamento progressivo do botão de confirmação */
+.btn__spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #fff;
+  animation: petnip-spin .7s linear infinite;
+}
+
+.btn.is-loading {
+  pointer-events: none;
+  opacity: 0.92;
+}
+.btn.is-loading .btn__label { opacity: 0.85; }
+.btn.is-loading .btn__spinner { display: inline-block; margin-left: 8px; }
+
+@keyframes petnip-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ripple { animation: none; opacity: 0; }
+  .btn__spinner { animation-duration: 1.4s; }
+}
+
+/* =========================================================
+   MICROANIMAÇÃO DE SUCESSO — Lottie + confete
+   ========================================================= */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(30, 41, 59, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+
+.success-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.success-card {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  background: var(--cream);
+  border-radius: 24px;
+  padding: 28px 24px 26px;
+  text-align: center;
+  box-shadow: 0 18px 40px rgba(30, 41, 59, 0.28);
+  transform: translateY(14px) scale(0.96);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+
+.success-overlay.is-open .success-card {
+  transform: translateY(0) scale(1);
+}
+
+.success-card__lottie {
+  width: 132px;
+  height: 132px;
+  margin: 0 auto 6px;
+  position: relative;
+  z-index: 2;
+}
+
+.success-card__lottie::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: var(--green-petnip);
+  z-index: -1;
+}
+
+.success-card__title {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--text-dark);
+  margin: 4px 0 6px;
+}
+
+.success-card__desc {
+  font-size: 13.5px;
+  color: #6B6459;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Confete: peças coloridas que estouram ao redor do badge */
+.success-card__confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  opacity: 0;
+}
+
+.success-overlay.is-open .confetti-piece {
+  animation: petnip-confetti .9s ease-out forwards;
+}
+
+@keyframes petnip-confetti {
+  0%   { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: translate(var(--confetti-x), var(--confetti-y)) rotate(var(--confetti-r)) scale(0.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .success-card__lottie { animation: none; }
+  .confetti-piece { display: none; }
+}
+
+/* =========================================================
    SKELETON SCREENS — efeito shimmer durante carregamento
    ========================================================= */
 
