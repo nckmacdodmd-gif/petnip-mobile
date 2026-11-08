@@ -22,6 +22,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
  
 <link rel="stylesheet" href="style.css">
+<!-- Lottie (microinteração de sucesso) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js" defer></script>
 </head>
 <body>
  
@@ -253,7 +255,10 @@ Cada item da lista (gerado via JS, mas a estrutura é esta):
     </div>
     <div class="modal-actions">
       <button class="btn btn--outline" id="modalApadrinharBtn">Apadrinhar</button>
-      <button class="btn btn--primary" id="modalAdotarBtn">Quero adotar</button>
+      <button class="btn btn--primary" id="modalAdotarBtn">
+  <span class="btn__label">Quero adotar</span>
+  <span class="btn__spinner" aria-hidden="true"></span>
+</button>
     </div>
   </div>
 </div>
@@ -300,6 +305,16 @@ Cada item da lista (gerado via JS, mas a estrutura é esta):
   </div>
 </div>
  
+<!-- ===== OVERLAY: Microinteração de sucesso (Lottie) ===== -->
+<div class="success-overlay" id="successOverlay" aria-hidden="true" role="status" aria-live="polite">
+  <div class="success-card">
+    <div class="success-card__confetti" id="successConfetti" aria-hidden="true"></div>
+    <div class="success-card__lottie" id="successLottie"></div>
+    <p class="success-card__title">Solicitação enviada com amor!</p>
+    <p class="success-card__desc" id="successDesc">Em breve o tutor entra em contato com você. 🐾</p>
+  </div>
+</div>
+
 <!-- ===== TOAST ===== -->
 <div class="toast" id="toast"></div>
  
