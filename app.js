@@ -105,6 +105,10 @@
     { id: "t4", text: "Dar vermífugo" }
   ];
 
+  const tarefasFeitas = store.get("tarefasFeitas", []);
+  TASKS.forEach((t) => { t.done =
+    tarefasFeitas.includes(t.id); });
+  
   const NOTIFS = [
     { id: "n1", icone: "🐶", texto: "Novo pet perto de você: Marley, 6 meses", tempo: "há 5 min", acao: { pet: "p4" } },
     { id: "n2", icone: "💬", texto: "Maria enviou uma mensagem sobre a Luna", tempo: "há 1 h", acao: { view: "mensagens" } },
@@ -826,11 +830,18 @@
 
   const TRASH_ICON = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m1 0-.7 12.1a2 2 0 0 1-2 1.9H10.7a2 2 0 0 1-2-1.9L8 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
+  const CHECK_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.5 4.5L19 7.5"
+    stroke="currentColor" stroke-width="3.2" stroke-linecap="round"
+    stroke-linejoin="round"/></svg>';
+  
   function taskItemHtml(task) {
     return `
-      <li class="task-item" data-id="${esc(task.id)}">
-        <div class="task-item__content">
-          <span class="task-checkbox" aria-hidden="true"></span>
+      <li class="task-item ${task.done ? "is-done" : ""}" dataid="${esc(task.id)}">
+      <div class="task-item__content">
+      <button class="task-check" data-action="toggle" ariapressed="${task.done ? "true" : "false"}" aria-label="Marcar como concluído: ${esc(task.text)}">
+      <span class="task-check__box">${CHECK_ICON}</span>
+      </button>
+
           <span class="task-text">${esc(task.text)}</span>
           <button class="task-item__trash" data-action="reveal" aria-label="Excluir tarefa: ${esc(task.text)}">${TRASH_ICON}</button>
         </div>
@@ -878,11 +889,27 @@
   }
 
   on(els.taskList, "click", (e) => {
-    const li = e.target.closest(".task-item");
-    if (!li) return;
-    if (e.target.closest('[data-action="reveal"]')) openSwipe(li);
-    else if (e.target.closest('[data-action="cancel"]')) closeSwipe(li);
-  });
+const li = e.target.closest(".task-item");
+if (!li) return;
+if (e.target.closest('[data-action="toggle"]'))
+toggleTask(li);
+else if (e.target.closest('[data-action="reveal"]'))
+openSwipe(li);
+else if (e.target.closest('[data-action="cancel"]'))
+closeSwipe(li);
+});
+
+  function toggleTask(li) {
+const task = TASKS.find((t) => t.id === li.dataset.id);
+if (!task) return;
+task.done = !task.done;
+li.classList.toggle("is-done", task.done);
+const btn = li.querySelector('[data-action="toggle"]');
+if (btn) btn.setAttribute("aria-pressed", String(task.done));
+store.set("tarefasFeitas", TASKS.filter((t) =>
+t.done).map((t) => t.id));
+if (task.done) showToast("Cuidado concluído ✅");
+}
 
   on(document, "click", (e) => {
     if (openSwipeItem && !openSwipeItem.contains(e.target)) closeSwipe(openSwipeItem);
