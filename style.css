@@ -92,12 +92,19 @@ body:not([data-view="feed"]) .species-tabs { display: none; }
 body:not([data-view="feed"]) .app-header__row { margin-bottom: 0; }
 
 .app-logo {
-  font-family: var(--font-title);
-  font-weight: 900;
-  font-size: 26px;
-  letter-spacing: 0.5px;
-  color: var(--cream);
+flex: 1; /* ocupa o espaço entre o menu e o sino → logo fica no
+centro exato */
+display: flex;
+align-items: center;
+justify-content: center;
 }
+.app-logo img {
+display: block;
+height: 32px;
+width: auto;
+max-width: 100%;
+}
+
 
 .icon-btn {
   position: relative;
