@@ -132,6 +132,13 @@
   // -----------------------------------------------------------
   // 2) ESTADO
   // -----------------------------------------------------------
+  // Foto de perfil local (com a URL do GitHub como plano B)
+const PROFILE_PHOTO = "./assets/imagens/my-notion-faceportrait.png";
+const PROFILE_PHOTO_FALLBACK = "https://
+raw.githubusercontent.com/nckmacdodmd-gif/petnip-mobile/
+82ffac04866d87a2bddac1d142e5e07c9d893b71/assets/imagens/mynotion-face-portrait.png";
+  
+  
   const state = {
     loading: true,
     filtroEspecie: "todos",
@@ -141,7 +148,7 @@
     user: store.get("user", {
       nome: "Toninho Silva",
       cidade: "Carapicuíba, SP",
-      foto: IMG("photo-1500648767791-00dcc994a43e")
+      foto: PROFILE_PHOTO
     }),
     modo: "adotante"
   };
@@ -185,13 +192,22 @@
     return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
   }
 
-  document.addEventListener("error", (e) => {
-    const img = e.target;
-    if (img && img.tagName === "IMG" && img.dataset.fallback && !img.dataset.failed) {
-      img.dataset.failed = "1";
-      img.src = placeholderSrc(img.dataset.fallback);
-    }
-  }, true);
+ document.addEventListener("error", (e) => {
+const img = e.target;
+if (!img || img.tagName !== "IMG") return;
+// 1º plano B: endereço alternativo (ex.: URL do GitHub)
+if (img.dataset.altsrc && !img.dataset.triedAlt) {
+img.dataset.triedAlt = "1";
+img.src = img.dataset.altsrc;
+return;
+}
+// 2º plano B: desenho com emoji
+
+   if (img.dataset.fallback && !img.dataset.failed) {
+img.dataset.failed = "1";
+img.src = placeholderSrc(img.dataset.fallback);
+}
+}, true);
 
   // -----------------------------------------------------------
   // 5) UTILITÁRIOS DE UI (overlays, toast, navegação)
@@ -560,10 +576,13 @@
     if (els.drawerName) els.drawerName.textContent = u.nome;
     if (els.drawerCity) els.drawerCity.textContent = u.cidade;
     [els.profileAvatar, els.drawerAvatar].forEach((img) => {
-      if (!img) return;
-      delete img.dataset.failed;
-      img.src = u.foto;
-    });
+if (!img) return;
+delete img.dataset.failed;
+delete img.dataset.triedAlt;
+img.dataset.altsrc = PROFILE_PHOTO_FALLBACK; // plano B se
+o arquivo local não abrir
+img.src = PROFILE_PHOTO;
+});
     if (els.statDivulgados) els.statDivulgados.textContent = String(PETS.filter((p) => p.dono === "me").length);
   }
 
