@@ -64,13 +64,13 @@
       descricao: "Thor é forte, brincalhão e extremamente leal. Ideal para quem tem espaço e experiência com cães de porte grande. Já está castrado."
     },
     {
-      id: "p4", nome: "Marley", especie: "cachorro", raca: "Caramelo (SRD)", idade: "6 meses", cidade: "São Paulo, SP",
+      id: "p4", nome: "Marley", especie: "cachorro", raca: "Pastor Australiano", idade: "6 meses", cidade: "São Paulo, SP",
       porte: "Pequeno porte", temperamento: "Elétrico", saude: "Vacinas em dia", sociavel: "Adora crianças", dono: "outro",
       foto: IMG("photo-1587300003388-59208cc962cb"),
       descricao: "Filhote cheio de energia, ótimo para famílias ativas. Já está em processo de adestramento básico e adora brincar de bolinha."
     },
     {
-      id: "p5", nome: "Mia", especie: "gato", raca: "Angorá", idade: "3 anos", cidade: "Cotia, SP",
+      id: "p5", nome: "Mia", especie: "gato", raca: "British Shorthair", idade: "3 anos", cidade: "Cotia, SP",
       porte: "Médio porte", temperamento: "Carinhosa", saude: "Castrada", sociavel: "Sociável", dono: "outro",
       foto: IMG("photo-1533738363-b7f9aef128ce"),
       descricao: "Mia é super carinhosa e adora colo. Se dá bem com outros gatos e já viveu com crianças. Está com todas as vacinas em dia."
@@ -82,7 +82,7 @@
       descricao: "Piu é um canário alegre que canta todas as manhãs. Precisa de uma gaiola espaçosa e companhia frequente."
     },
     {
-      id: "p7", nome: "Simba", especie: "gato", raca: "Laranja (SRD)", idade: "5 meses", cidade: "Osasco, SP",
+      id: "p7", nome: "Simba", especie: "gato", raca: "Frajola (SRD)", idade: "5 meses", cidade: "Osasco, SP",
       porte: "Pequeno porte", temperamento: "Brincalhão", saude: "Vacinado", sociavel: "Sociável", dono: "outro",
       foto: IMG("photo-1514888286974-6c03e2ca1dba"),
       descricao: "Filhote curioso e cheio de energia. Adora brinquedos com penas e já está usando caixa de areia direitinho."
@@ -116,7 +116,7 @@
   ];
 
   const CHATS = [
-    { id: "c1", nome: "Maria (tutora da Luna)", avatar: "🐱", msg: "Oi! A Luna ainda está disponível?", hora: "10:42", nao: 2 },
+    { id: "c1", nome: "Maria", avatar: "🐱", msg: "Oi! A Luna ainda está disponível?", hora: "10:42", nao: 2 },
     { id: "c2", nome: "ONG Patas Felizes", avatar: "🐶", msg: "Podemos agendar a visita para sábado?", hora: "Ontem", nao: 0 },
     { id: "c3", nome: "Carlos", avatar: "🦜", msg: "Obrigado pelas dicas sobre o Piu!", hora: "Seg", nao: 0 }
   ];
