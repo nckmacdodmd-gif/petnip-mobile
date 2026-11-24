@@ -330,7 +330,8 @@ body:not([data-view="feed"]) .app-header__row { margin-bottom: 0; }
    GRID E CARDS
    ========================================================= */
 .pet-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
-@media (min-width: 420px) { .pet-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 420px) { .pet-grid { grid-template-columns:
+repeat(2, minmax(0, 1fr)); } }
 
 .pet-grid.is-entering .pet-card { animation: cardIn 0.4s ease both; }
 @keyframes cardIn {
@@ -348,12 +349,20 @@ body:not([data-view="feed"]) .app-header__row { margin-bottom: 0; }
 }
 
 .pet-card__photo-wrap {
-  position: relative;
-  aspect-ratio: 4 / 3.4;
-  background: var(--line);
-  cursor: pointer;
+position: relative;
+flex: none;
+overflow: hidden;
+aspect-ratio: 4 / 3;
+background: var(--line);
+cursor: pointer;
+   }
+.pet-card__photo-wrap img {
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+object-fit: cover;
 }
-.pet-card__photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
 .pet-card__fav {
   position: absolute;
